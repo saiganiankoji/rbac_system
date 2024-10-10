@@ -109,7 +109,7 @@ end
 
 If you need to define custom resource names without a corresponding model, you can do this:
 
-````
+```
 def check_authorization
     action_map = {
     'bulk_sku_upload' => 'create',
@@ -117,8 +117,6 @@ def check_authorization
     'bulk_option_value_sku_mappings_upload' => 'create',
     'bulk_product_medias_upload' => 'create'
     }
-
-
 
     action = action_map[action_name]
     resource = 'Upload'
@@ -130,6 +128,7 @@ def check_authorization
     end
 end
 ```
+
 ## Development
 
 After checking out the repository, run bin/setup to install dependencies. You can run tests with:
@@ -164,5 +163,7 @@ The gem is available as open source under the terms of the MIT License.
 3. **Development and Contributing Guidelines**: Clear instructions for development, contributing, and licensing provide users with the necessary information to participate in the project.
 
 Feel free to customize any sections as needed, especially the GitHub links and any specific details regarding your implementation!
+
 ```
-````
+
+```
