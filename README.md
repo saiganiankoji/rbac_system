@@ -45,7 +45,7 @@ gem install rbac_system
 
 To use the rbac_system gem, you need to check authorization based on the current admin, the action being performed, and the resource name. Here are some usage scenarios:
 
-#Case 1:
+*Case 1:*
 Model Exists in Database
 For a standard model, you can implement authorization as follows:
 
@@ -65,7 +65,7 @@ authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
 unless authorized
 render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
 end
-#Case 2:
+*Case 2:*
 Multiple Models in a Single Controller
 If your controller manages multiple models, use the following approach:
 
@@ -94,7 +94,7 @@ authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
 unless authorized
 render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
 end
-#Case 3:
+*Case 3:*
 Custom Resource Names
 If you need to define custom resource names without a corresponding model, you can do this:
 
