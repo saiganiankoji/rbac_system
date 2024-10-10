@@ -45,74 +45,91 @@ gem install rbac_system
 
 To use the rbac_system gem, you need to check authorization based on the current admin, the action being performed, and the resource name. Here are some usage scenarios:
 
+before_action :check_authorization
+
 ## Case 1: Model Exists in Database
+
 For a standard model, you can implement authorization as follows:
 
-before_action :check_authorization
 ```
-action_map = {
-'create_area' => 'create',
-'area_listing' => 'read',
-'update_area' => 'update'
-}
-```
-action = action_map[action_name]
-resource = controller_name.classify
+def check_authorization
+    action_map = {
+        'create_area' => 'create',
+        'area_listing' => 'read',
+        'update_area' => 'update'
+    }
+    action = action_map[action_name]
+    resource = controller_name.classify
 
-authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
+    authorized = RbacSystem::Authorization.new(current_admin, resource, action).authorized?
 
-unless authorized
-render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
+    # If not authorized, render a forbidden error
+    unless authorized
+        render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
+    end
 end
+```
+
 ## Case 2: Multiple Models in a Single Controller
+
 If your controller manages multiple models, use the following approach:
-```
-action_map = {
-'add_update_cart' => { action: 'create', resource: 'Cart' },
-'cart_checkout' => { action: 'create', resource: 'Cart' },
-'validate_discount' => { action: 'create', resource: 'Cart' },
-'get_cart_summary' => { action: 'read', resource: 'Cart' },
-'place_order' => { action: 'create', resource: 'Order' },
-'order_deliver' => { action: 'read', resource: 'Order' },
-'clear_cart' => { action: 'put', resource: 'Cart' },
-'get_orders' => { action: 'read', resource: 'Order' },
-'get_carts' => { action: 'read', resource: 'Cart' },
-'verify_unicommerce_order_status' => { action: 'update', resource: 'Order' },
-'unicommerce_snapshot' => { action: 'read', resource: 'ProductSku' },
-'cancel_order' => { action: 'create', resource: 'Order' },
-'get_unicommerce_order_status' => { action: 'read', resource: 'Order' }
-}
-```
-action_info = action_map[action_name]
-action = action_info[:action]
-resource = action_info[:resource]
 
-authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
+```
+def  check_authorization
+    action_map = {
+    'add_update_cart' => { action: 'create', resource: 'Cart' },
+    'cart_checkout' => { action: 'create', resource: 'Cart' },
+    'validate_discount' => { action: 'create', resource: 'Cart' },
+    'get_cart_summary' => { action: 'read', resource: 'Cart' },
+    'place_order' => { action: 'create', resource: 'Order' },
+    'order_deliver' => { action: 'read', resource: 'Order' },
+    'clear_cart' => { action: 'put', resource: 'Cart' },
+    'get_orders' => { action: 'read', resource: 'Order' },
+    'get_carts' => { action: 'read', resource: 'Cart' },
+    'verify_unicommerce_order_status' => { action: 'update', resource: 'Order' },
+    'unicommerce_snapshot' => { action: 'read', resource: 'ProductSku' },
+    'cancel_order' => { action: 'create', resource: 'Order' },
+    'get_unicommerce_order_status' => { action: 'read', resource: 'Order' }
+    }
 
-unless authorized
-render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
+    action_info = action_map[action_name]
+    action = action_info[:action]
+    resource = action_info[:resource]
+
+    authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
+
+    unless authorized
+    render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
+    end
+
 end
+```
 
 ## Case 3: Custom Resource Names
+
 If you need to define custom resource names without a corresponding model, you can do this:
 
-```
-action_map = {
-'bulk_sku_upload' => 'create',
-'bulk_option_values_upload' => 'create',
-'bulk_option_value_sku_mappings_upload' => 'create',
-'bulk_product_medias_upload' => 'create'
-}
-```
-action = action_map[action_name]
-resource = 'Upload'
+````
+def check_authorization
+    action_map = {
+    'bulk_sku_upload' => 'create',
+    'bulk_option_values_upload' => 'create',
+    'bulk_option_value_sku_mappings_upload' => 'create',
+    'bulk_product_medias_upload' => 'create'
+    }
 
-authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
 
-unless authorized
-render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
+
+    action = action_map[action_name]
+    resource = 'Upload'
+
+    authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
+
+    unless authorized
+    render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
+    end
 end
-
+```
 ## Development
 
 After checking out the repository, run bin/setup to install dependencies. You can run tests with:
@@ -147,3 +164,5 @@ The gem is available as open source under the terms of the MIT License.
 3. **Development and Contributing Guidelines**: Clear instructions for development, contributing, and licensing provide users with the necessary information to participate in the project.
 
 Feel free to customize any sections as needed, especially the GitHub links and any specific details regarding your implementation!
+```
+````
