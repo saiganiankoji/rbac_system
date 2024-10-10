@@ -12,7 +12,7 @@ This gem allows you to define three primary entities:
    - **Name**: The name of the role (e.g., `Editor`, `Viewer`).
    - **Permissions**: A hash mapping resources to their respective actions. For example:
 
-     ```ruby
+     ```
      {
        Upload: { manage: true, create: true },
        Download: { manage: true, read: true },
@@ -45,18 +45,17 @@ gem install rbac_system
 
 To use the rbac_system gem, you need to check authorization based on the current admin, the action being performed, and the resource name. Here are some usage scenarios:
 
-*Case 1:*
-Model Exists in Database
+## Case 1: Model Exists in Database
 For a standard model, you can implement authorization as follows:
 
 before_action :check_authorization
-
+```
 action_map = {
 'create_area' => 'create',
 'area_listing' => 'read',
 'update_area' => 'update'
 }
-
+```
 action = action_map[action_name]
 resource = controller_name.classify
 
@@ -65,10 +64,9 @@ authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
 unless authorized
 render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
 end
-*Case 2:*
-Multiple Models in a Single Controller
+## Case 2: Multiple Models in a Single Controller
 If your controller manages multiple models, use the following approach:
-
+```
 action_map = {
 'add_update_cart' => { action: 'create', resource: 'Cart' },
 'cart_checkout' => { action: 'create', resource: 'Cart' },
@@ -84,7 +82,7 @@ action_map = {
 'cancel_order' => { action: 'create', resource: 'Order' },
 'get_unicommerce_order_status' => { action: 'read', resource: 'Order' }
 }
-
+```
 action_info = action_map[action_name]
 action = action_info[:action]
 resource = action_info[:resource]
@@ -94,19 +92,18 @@ authorized = RbacSystem::Authorization.new(admin, resource, action).authorized?
 unless authorized
 render json: { status: 'failure', message: 'Forbidden', errors: ['You are not authorized to perform this action'] }, status: :forbidden
 end
-*Case 3:*
-Custom Resource Names
+
+## Case 3: Custom Resource Names
 If you need to define custom resource names without a corresponding model, you can do this:
 
-ruby
-Copy code
+```
 action_map = {
 'bulk_sku_upload' => 'create',
 'bulk_option_values_upload' => 'create',
 'bulk_option_value_sku_mappings_upload' => 'create',
 'bulk_product_medias_upload' => 'create'
 }
-
+```
 action = action_map[action_name]
 resource = 'Upload'
 
